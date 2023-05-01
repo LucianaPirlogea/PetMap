@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "709748073987",
+    "project_id": "petmap-d1dc3",
+    "storage_bucket": "petmap-d1dc3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709748073987:android:7dbfc11eab265ee71f5036",
+        "android_client_info": {
+          "package_name": "com.example.petmap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709748073987-n51v4ikuhkdpjuom1b1teqqr1oc7bbie.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.petmap",
+            "certificate_hash": "f841c614ebd13cdf09137f609636d86793585fdb"
+          }
+        },
+        {
+          "client_id": "709748073987-to52h08b7r57e47udn6rvrvhs23vqa83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNDq8Xf0c_KT6jty3kqlsx2F6B6jN0UIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709748073987-to52h08b7r57e47udn6rvrvhs23vqa83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
