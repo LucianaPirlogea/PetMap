@@ -8,13 +8,12 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 
-class HomeActivity : AppCompatActivity() {
+class ProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_profile)
 
         val email = intent.getStringExtra("email")
         val displayName = intent.getStringExtra("name")
@@ -23,7 +22,7 @@ class HomeActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.signOutBtn).setOnClickListener {
             clearGoogleSignInCache()
-            startActivity(Intent(this , MainActivity::class.java))
+            startActivity(Intent(this , SignInActivity::class.java))
         }
     }
 
