@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragment_add_pet"
-    tools:context=".AddPetFragment">
+    tools:context=".AddPetFragment"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/location_lat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:hint="Location latitude"
+        android:layout_height="25dp"
+        android:textSize="20dp"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/location_long"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:textSize="20dp"
+        android:hint="Location longitude" />
+
+    <TextView
+        android:id="@+id/date_time"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textSize="20dp"
+        android:hint="Date" />
+
+    <EditText
+        android:id="@+id/animal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Animal"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:id="@+id/button"
+        android:text="Add"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
