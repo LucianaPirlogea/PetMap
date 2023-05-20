@@ -1,5 +1,6 @@
 package com.example.petmap
 
+import MyPetsFragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -21,7 +22,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
+    AddPetFragment.AddPetFragmentListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -31,6 +33,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lastKnownLocation: Location? = null
     private lateinit var fabAddMarker: FloatingActionButton
 
+    override fun onAddPetCompleted() {
+        // Switch to MyPetsFragment
+        val addPetFragment = supportFragmentManager.findFragmentByTag("AddPetFragment")
+        addPetFragment?.let {
+            supportFragmentManager.beginTransaction()
+                .remove(it)
+                .commit()
+        }
+
+        // Add the MyPetsFragment
+        val myPetsFragment = MyPetsFragment()
+        supportFragmentManager.beginTransaction()
+            .add(R.id.coordinator_layout, myPetsFragment, "MyPetsFragment")
+            .addToBackStack(null)
+            .commit()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,8 +57,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map_container) as? SupportMapFragment
+            ?: SupportMapFragment.newInstance().also {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.map_container, it)
+                    .commit()
+            }
         mapFragment.getMapAsync(this)
 
         fabAddMarker = findViewById(R.id.fab_add_marker)
@@ -50,6 +72,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             bundle.putParcelable("current_location", currentLocation)
             val fragment = AddPetFragment()
             fragment.arguments = bundle
+            fragment.listener = this
             if (currentLocation != null) {
                 supportFragmentManager.beginTransaction()
                     .hide(mapFragment)
@@ -92,10 +115,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true
-                    updateLocationUI()
                 }
             }
         }
+        updateLocationUI()
     }
 
     @SuppressLint("MissingPermission")

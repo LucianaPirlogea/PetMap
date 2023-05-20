@@ -1,5 +1,7 @@
 package com.example.petmap
 
+import MyPetsFragment
+import android.content.Context
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -8,10 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.petmap.databinding.FragmentAddPetBinding
 import com.example.petmap.models.Pet
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.text.SimpleDateFormat
@@ -23,9 +28,8 @@ class AddPetFragment : Fragment() {
     lateinit var binding: FragmentAddPetBinding
     var currentLocation: Location? = null
     val storageRef = Firebase.storage.reference
-    val petRef = storageRef.child("pet.json")
     val gson = Gson()
-
+    lateinit var listener: AddPetFragmentListener
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,10 +42,14 @@ class AddPetFragment : Fragment() {
         return binding.root
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = context as AddPetFragmentListener
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val latitude = view.findViewById<TextView>(R.id.location_lat);
         val longitude = view.findViewById<TextView>(R.id.location_long);
 
@@ -63,19 +71,27 @@ class AddPetFragment : Fragment() {
 
         date.text = "Date: $formattedDate\nTime: $formattedTime"
 
+        val path = "pets/" + "$formattedDate" + "$formattedTime" + ".json"
+
         var addPetButton = view.findViewById<Button>(R.id.button)
         addPetButton.setOnClickListener {
             var pet = Pet(latitude = latVal, longitude = longVal, date = date.text.toString(), animal = animal.text.toString())
             val petJson = gson.toJson(pet)
             val petBytes = petJson.toByteArray()
+            val petRef = storageRef.child(path)
             petRef.putBytes(petBytes)
                 .addOnSuccessListener {
-                    // File upload successful
+                    listener.onAddPetCompleted()
                 }
                 .addOnFailureListener { exception ->
                     // Handle error
                 }
+
         }
+    }
+
+    interface AddPetFragmentListener {
+        fun onAddPetCompleted()
     }
 
 }
