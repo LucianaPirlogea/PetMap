@@ -11,6 +11,7 @@ import com.example.petmap.databinding.FragmentMyPetsBinding
 import com.example.petmap.models.Pet
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import org.json.JSONObject
 
 class MyPetsFragment : Fragment() {
 
@@ -63,10 +64,13 @@ class MyPetsFragment : Fragment() {
         storageRef.listAll().addOnSuccessListener { result ->
             petList.clear()
             for (reference in result.items) {
-                reference.downloadUrl.addOnSuccessListener { uri ->
-                    // Create a Pet object with the retrieved download URL
-                    val pet = Pet(uri.toString(), "", "", "")
-                    petList.add(pet)
+                // Retrieve the download URL
+                val jsonFileRef = reference.parent?.child(reference.name)
+                jsonFileRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener { bytes ->
+                    val json = String(bytes)
+                    // Parse the JSON and update the corresponding Pet object with the retrieved information
+                    val petInfo = parseJson(json)
+                    petList.add(petInfo)
                     petListAdapter.notifyDataSetChanged()
                 }
             }
@@ -74,4 +78,17 @@ class MyPetsFragment : Fragment() {
             // Handle the exception
         }
     }
+
+    private fun parseJson(json: String): Pet {
+        val jsonObject = JSONObject(json)
+        val latitude = jsonObject.getString("latitude")
+        val longitude = jsonObject.getString("longitude")
+        val date = jsonObject.getString("date")
+        val animal = jsonObject.getString("animal")
+
+        // Create and return a PetInfo object with the extracted information
+        return Pet(latitude, longitude, date, animal)
+    }
+
+
 }

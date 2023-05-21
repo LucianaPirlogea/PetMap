@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.petmap.databinding.ActivityMapsBinding
+import com.example.petmap.models.Pet
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,6 +22,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import org.json.JSONObject
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     AddPetFragment.AddPetFragmentListener {
@@ -32,6 +36,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lastKnownLocation: Location? = null
     private lateinit var fabAddMarker: FloatingActionButton
+    private lateinit var storageRef: StorageReference
 
     override fun onAddPetCompleted() {
         // Switch to MyPetsFragment
@@ -88,7 +93,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        retrieveDataFromFirebaseStorage()
         // Request location permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -143,6 +148,36 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             mMap.uiSettings.isMyLocationButtonEnabled = false
             lastKnownLocation = null
         }
+    }
+
+    private fun retrieveDataFromFirebaseStorage() {
+        storageRef = FirebaseStorage.getInstance().reference.child("pets")
+        storageRef.listAll().addOnSuccessListener { result ->
+            for (reference in result.items) {
+                // Retrieve the download URL
+                val jsonFileRef = reference.parent?.child(reference.name)
+                jsonFileRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener { bytes ->
+                    val json = String(bytes)
+                    // Parse the JSON and update the corresponding Pet object with the retrieved information
+                    val petInfo = parseJson(json)
+                    val latLng = LatLng(petInfo.latitude!!.toDouble(), petInfo.longitude!!.toDouble())
+                    mMap.addMarker(MarkerOptions().position(latLng).title(petInfo.animal))
+                }
+            }
+        }.addOnFailureListener { exception ->
+            // Handle the exception
+        }
+    }
+
+    private fun parseJson(json: String): Pet {
+        val jsonObject = JSONObject(json)
+        val latitude = jsonObject.getString("latitude")
+        val longitude = jsonObject.getString("longitude")
+        val date = jsonObject.getString("date")
+        val animal = jsonObject.getString("animal")
+
+        // Create and return a PetInfo object with the extracted information
+        return Pet(latitude, longitude, date, animal)
     }
 
     companion object {
