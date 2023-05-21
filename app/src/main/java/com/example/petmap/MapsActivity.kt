@@ -4,6 +4,7 @@ import MyPetsFragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
@@ -19,15 +20,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import org.json.JSONObject
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
-    AddPetFragment.AddPetFragmentListener {
+    AddPetFragment.AddPetFragmentListener{
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -94,6 +94,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         retrieveDataFromFirebaseStorage()
+
+        mMap.setOnMarkerClickListener { marker ->
+            // Create a blue circle with a radius of 100 meters at the marker's position
+            val circleOptions = CircleOptions()
+                .center(marker.position)
+                .radius(700.0) // the radius is in meters
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.argb(70, 0, 0, 255)) // semi-transparent blue
+
+            // Add the circle to the map
+            mMap.addCircle(circleOptions)
+
+            false
+        }
+
         // Request location permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
