@@ -37,6 +37,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private var lastKnownLocation: Location? = null
     private lateinit var fabAddMarker: FloatingActionButton
     private lateinit var storageRef: StorageReference
+    private val petIcon: BitmapDescriptor by lazy {
+        val color = ContextCompat.getColor(this, R.color.black)
+        BitmapHelper.vectorToBitmap(this, R.drawable.baseline_pets_24, color)
+    }
 
     override fun onAddPetCompleted() {
         // Switch to MyPetsFragment
@@ -93,8 +97,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
         retrieveDataFromFirebaseStorage()
-
         mMap.setOnMarkerClickListener { marker ->
             // Create a blue circle with a radius of 100 meters at the marker's position
             val circleOptions = CircleOptions()
@@ -176,7 +180,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     // Parse the JSON and update the corresponding Pet object with the retrieved information
                     val petInfo = parseJson(json)
                     val latLng = LatLng(petInfo.latitude!!.toDouble(), petInfo.longitude!!.toDouble())
-                    mMap.addMarker(MarkerOptions().position(latLng).title(petInfo.animal))
+                    mMap.addMarker(MarkerOptions().position(latLng).title(petInfo.animal).icon(petIcon)).apply {
+                        this!!.tag = petInfo
+                    }
                 }
             }
         }.addOnFailureListener { exception ->

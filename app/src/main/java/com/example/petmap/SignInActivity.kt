@@ -43,10 +43,7 @@ class SignInActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
 //                R.id.home -> {
-//                    val intent : Intent = Intent(this , HomeActivity::class.java)
-//                    intent.putExtra("email" , account.email)
-//                    intent.putExtra("name" , account.displayName)
-//                    startActivity(intent)
+//
 //                    loadFragment(HomeFragment())
 //                    true
 //                }
