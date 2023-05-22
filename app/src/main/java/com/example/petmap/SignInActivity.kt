@@ -1,5 +1,6 @@
 package com.example.petmap
 
+import MyPetsFragment
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,20 +8,24 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.petmap.models.Profile
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.google.gson.Gson
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var auth : FirebaseAuth
     private lateinit var googleSignInClient : GoogleSignInClient
-    lateinit var bottomNav : BottomNavigationView
+    val storageRef = Firebase.storage.reference
+    val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,31 +44,6 @@ class SignInActivity : AppCompatActivity() {
             signInGoogle()
         }
 
-        bottomNav = findViewById(R.id.bottomNav) as BottomNavigationView
-        bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-//                R.id.home -> {
-//
-//                    loadFragment(HomeFragment())
-//                    true
-//                }
-                R.id.add -> {
-                    val intent : Intent = Intent(this , MapsActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-//                R.id.profile -> {
-//                    val intent : Intent = Intent(this , HomeActivity::class.java)
-//                    intent.putExtra("email" , account.email)
-//                    intent.putExtra("name" , account.displayName)
-//                    startActivity(intent)
-//                    true
-//                }
-                else -> {
-                    true
-                }
-            }
-        }
     }
 
     private fun signInGoogle(){
@@ -95,15 +75,24 @@ class SignInActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(account.idToken , null)
         auth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful){
-                val intent : Intent = Intent(this , ProfileActivity::class.java)
-                intent.putExtra("email" , account.email)
-                intent.putExtra("name" , account.displayName)
-                startActivity(intent)
+                var profile = Profile(account.email, account.displayName)
+                val profileJson = gson.toJson(profile)
+                val profileBytes = profileJson.toByteArray()
+                val accountRef = storageRef.child("account.json")
+                accountRef.putBytes(profileBytes)
+                    .addOnSuccessListener {
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra("initial_fragment", "MyPetsFragment")
+                        startActivity(intent)
+                        finish()
+                    }
+                    .addOnFailureListener { exception ->
+                        // Handle error
+                    }
             }else{
                 Toast.makeText(this, it.exception.toString() , Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
 }

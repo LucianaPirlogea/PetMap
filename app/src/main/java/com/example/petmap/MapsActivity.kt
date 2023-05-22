@@ -3,10 +3,12 @@ package com.example.petmap
 import MyPetsFragment
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -43,20 +45,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onAddPetCompleted() {
-        // Switch to MyPetsFragment
-        val addPetFragment = supportFragmentManager.findFragmentByTag("AddPetFragment")
-        addPetFragment?.let {
-            supportFragmentManager.beginTransaction()
-                .remove(it)
-                .commit()
-        }
-
-        // Add the MyPetsFragment
-        val myPetsFragment = MyPetsFragment()
-        supportFragmentManager.beginTransaction()
-            .add(R.id.coordinator_layout, myPetsFragment, "MyPetsFragment")
-            .addToBackStack(null)
-            .commit()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("initial_fragment", "MyPetsFragment")
+        startActivity(intent)
+        finish()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +67,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         mapFragment.getMapAsync(this)
 
         fabAddMarker = findViewById(R.id.fab_add_marker)
+        fabAddMarker.visibility = View.VISIBLE
+
         fabAddMarker.setOnClickListener {
             val bundle = Bundle()
             val currentLocation = lastKnownLocation
@@ -88,6 +82,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     .add(R.id.coordinator_layout, fragment, "AddPetFragment")
                     .addToBackStack(null)
                     .commit()
+                fabAddMarker.visibility = View.GONE
                 Toast.makeText(this, "Current location added", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Current location not available", Toast.LENGTH_SHORT).show()
