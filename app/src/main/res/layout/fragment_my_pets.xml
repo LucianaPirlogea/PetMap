@@ -13,9 +13,19 @@ tools:context=".MyPetsFragment">
     android:hint="Search"
     android:inputType="text" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:id="@+id/button_share"
+        android:text="Share"
+        android:layout_height="wrap_content"/>
+
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
+
 
 </LinearLayout>

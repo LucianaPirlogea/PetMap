@@ -1,3 +1,4 @@
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,7 @@ import com.example.petmap.databinding.FragmentMyPetsBinding
 import com.example.petmap.models.Pet
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import org.json.JSONObject
 
 class MyPetsFragment : Fragment() {
@@ -33,6 +35,16 @@ class MyPetsFragment : Fragment() {
         setupRecyclerView()
         setupSearchBar()
         retrieveDataFromFirebaseStorage()
+        binding.buttonShare.setOnClickListener {
+            //intent to share
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT,convertPetListToString(petList))
+
+            //create chooser
+            val chooser = Intent.createChooser(intent, "Share using...")
+            startActivity(chooser)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -90,5 +102,12 @@ class MyPetsFragment : Fragment() {
         return Pet(latitude, longitude, date, animal)
     }
 
+    fun convertPetListToString(petList: List<Pet>): String? {
+        var result: String? = ""
+        for(pet in petList){
+            result += pet.animal + "\n" + pet.date + "\n\n"
+        }
+        return result
+    }
 
 }
