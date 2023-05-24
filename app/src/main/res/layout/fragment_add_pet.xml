@@ -5,39 +5,61 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_add_pet"
     tools:context=".AddPetFragment"
+    android:background="#B591FC"
     android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:hint="Add new pet"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="50dp"
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/location_lat"
         android:layout_width="match_parent"
         android:hint="Location latitude"
-        android:layout_height="25dp"
-        android:textSize="20dp"/>
+        android:layout_height="50dp"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="40dp"/>
 
     <TextView
         android:id="@+id/location_long"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:textSize="20dp"
-        android:hint="Location longitude" />
+        android:layout_height="50dp"
+        android:textSize="25dp"
+        android:hint="Location longitude"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/date_time"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:textSize="20dp"
-        android:hint="Date" />
+        android:layout_height="70dp"
+        android:textSize="25dp"
+        android:hint="Date"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"/>
 
     <EditText
         android:id="@+id/animal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Animal"/>
+        android:layout_height="60dp"
+        android:hint="Animal"
+        android:textSize="30dp"
+        android:textStyle="italic"
+        android:layout_marginTop="20dp"/>
 
     <Button
         android:layout_width="match_parent"
         android:id="@+id/button"
         android:text="Add"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>

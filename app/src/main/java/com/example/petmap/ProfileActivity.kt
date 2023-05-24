@@ -1,9 +1,11 @@
 package com.example.petmap
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -24,7 +26,8 @@ class ProfileActivity : AppCompatActivity() {
         val email = intent.getStringExtra("email")
         val displayName = intent.getStringExtra("name")
 
-        findViewById<TextView>(R.id.textView).text = email + "\n" + displayName
+        findViewById<TextView>(R.id.email).text = "Email: " + email
+        findViewById<TextView>(R.id.name).text = "Name: " + displayName
 
         findViewById<Button>(R.id.signOutBtn).setOnClickListener {
             clearGoogleSignInCache()

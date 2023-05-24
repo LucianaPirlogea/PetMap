@@ -93,8 +93,8 @@ class MyPetsFragment : Fragment() {
 
     private fun parseJson(json: String): Pet {
         val jsonObject = JSONObject(json)
-        val latitude = jsonObject.getString("latitude")
-        val longitude = jsonObject.getString("longitude")
+        val latitude = "Latitude: " + jsonObject.getString("latitude")
+        val longitude = "Longitude: " + jsonObject.getString("longitude")
         val date = jsonObject.getString("date")
         val animal = jsonObject.getString("animal")
 

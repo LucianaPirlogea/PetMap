@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -55,6 +56,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -194,6 +198,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         // Create and return a PetInfo object with the extracted information
         return Pet(latitude, longitude, date, animal)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

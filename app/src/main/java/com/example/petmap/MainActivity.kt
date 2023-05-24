@@ -2,8 +2,10 @@ package com.example.petmap
 
 import MyPetsFragment
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.example.petmap.models.Profile
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val initialFragment = intent.getStringExtra("initial_fragment")
         loadFragment(initialFragment)
         downloadAccountData()
