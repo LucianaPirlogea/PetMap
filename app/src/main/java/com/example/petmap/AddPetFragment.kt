@@ -1,6 +1,5 @@
 package com.example.petmap
 
-import MyPetsFragment
 import android.content.Context
 import android.location.Location
 import android.os.Build
@@ -10,13 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.petmap.databinding.FragmentAddPetBinding
 import com.example.petmap.models.Pet
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.text.SimpleDateFormat
@@ -83,8 +79,7 @@ class AddPetFragment : Fragment() {
                 .addOnSuccessListener {
                     listener.onAddPetCompleted()
                 }
-                .addOnFailureListener { exception ->
-                    // Handle error
+                .addOnFailureListener {
                 }
 
         }

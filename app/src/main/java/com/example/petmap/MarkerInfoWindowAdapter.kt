@@ -12,10 +12,8 @@ class MarkerInfoWindowAdapter(
     private val context: Context
 ) : GoogleMap.InfoWindowAdapter {
     override fun getInfoContents(p0: Marker): View? {
-        // 1. Get tag
         val pet = p0?.tag as? Pet ?: return null
 
-        // 2. Inflate view and set title, address, and rating
         val view = LayoutInflater.from(context).inflate(
             R.layout.marker_info_contents, null
         )
@@ -30,8 +28,7 @@ class MarkerInfoWindowAdapter(
     }
 
     override fun getInfoWindow(p0: Marker): View? {
-        // Return null to indicate that the
-        // default window (white bubble) should be used
+
         return null
     }
 }

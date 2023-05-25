@@ -7,12 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.petmap.databinding.FragmentMyPetsBinding
 import com.example.petmap.models.Pet
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.gson.Gson
 import org.json.JSONObject
 
 class MyPetsFragment : Fragment() {
@@ -36,12 +34,10 @@ class MyPetsFragment : Fragment() {
         setupSearchBar()
         retrieveDataFromFirebaseStorage()
         binding.buttonShare.setOnClickListener {
-            //intent to share
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT,convertPetListToString(petList))
 
-            //create chooser
             val chooser = Intent.createChooser(intent, "Share using...")
             startActivity(chooser)
         }
@@ -76,18 +72,15 @@ class MyPetsFragment : Fragment() {
         storageRef.listAll().addOnSuccessListener { result ->
             petList.clear()
             for (reference in result.items) {
-                // Retrieve the download URL
                 val jsonFileRef = reference.parent?.child(reference.name)
                 jsonFileRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener { bytes ->
                     val json = String(bytes)
-                    // Parse the JSON and update the corresponding Pet object with the retrieved information
                     val petInfo = parseJson(json)
                     petList.add(petInfo)
                     petListAdapter.notifyDataSetChanged()
                 }
             }
         }.addOnFailureListener { exception ->
-            // Handle the exception
         }
     }
 
@@ -98,7 +91,6 @@ class MyPetsFragment : Fragment() {
         val date = jsonObject.getString("date")
         val animal = jsonObject.getString("animal")
 
-        // Create and return a PetInfo object with the extracted information
         return Pet(latitude, longitude, date, animal)
     }
 

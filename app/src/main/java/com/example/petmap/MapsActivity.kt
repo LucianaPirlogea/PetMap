@@ -1,6 +1,5 @@
 package com.example.petmap
 
-import MyPetsFragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -14,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
 import com.example.petmap.databinding.ActivityMapsBinding
 import com.example.petmap.models.Pet
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -44,6 +42,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         val color = ContextCompat.getColor(this, R.color.black)
         BitmapHelper.vectorToBitmap(this, R.drawable.baseline_pets_24, color)
     }
+    var currentCircle: Circle? = null
 
     override fun onAddPetCompleted() {
         val intent = Intent(this, MainActivity::class.java)
@@ -51,6 +50,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         startActivity(intent)
         finish()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,7 +87,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     .addToBackStack(null)
                     .commit()
                 fabAddMarker.visibility = View.GONE
-                Toast.makeText(this, "Current location added", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Current location not available", Toast.LENGTH_SHORT).show()
             }
@@ -99,20 +98,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
         retrieveDataFromFirebaseStorage()
         mMap.setOnMarkerClickListener { marker ->
-            // Create a blue circle with a radius of 100 meters at the marker's position
+            currentCircle?.remove()
+
             val circleOptions = CircleOptions()
                 .center(marker.position)
-                .radius(700.0) // the radius is in meters
+                .radius(700.0)
                 .strokeColor(Color.BLUE)
                 .fillColor(Color.argb(70, 0, 0, 255)) // semi-transparent blue
 
-            // Add the circle to the map
-            mMap.addCircle(circleOptions)
+            currentCircle = mMap.addCircle(circleOptions)
 
             false
         }
 
-        // Request location permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true
@@ -150,7 +148,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             mMap.isMyLocationEnabled = true
             mMap.uiSettings.isMyLocationButtonEnabled = true
 
-            // Get the current location
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     lastKnownLocation = location
@@ -172,11 +169,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         storageRef = FirebaseStorage.getInstance().reference.child("pets")
         storageRef.listAll().addOnSuccessListener { result ->
             for (reference in result.items) {
-                // Retrieve the download URL
                 val jsonFileRef = reference.parent?.child(reference.name)
                 jsonFileRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener { bytes ->
                     val json = String(bytes)
-                    // Parse the JSON and update the corresponding Pet object with the retrieved information
                     val petInfo = parseJson(json)
                     val latLng = LatLng(petInfo.latitude!!.toDouble(), petInfo.longitude!!.toDouble())
                     mMap.addMarker(MarkerOptions().position(latLng).title(petInfo.animal).icon(petIcon)).apply {
@@ -185,7 +180,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 }
             }
         }.addOnFailureListener { exception ->
-            // Handle the exception
         }
     }
 
@@ -196,7 +190,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         val date = jsonObject.getString("date")
         val animal = jsonObject.getString("animal")
 
-        // Create and return a PetInfo object with the extracted information
         return Pet(latitude, longitude, date, animal)
     }
 

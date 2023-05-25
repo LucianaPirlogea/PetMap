@@ -2,10 +2,8 @@ package com.example.petmap
 
 import MyPetsFragment
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import com.example.petmap.models.Profile
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -58,8 +56,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadFragment(initialFragment: String?) {
         val fragment = when (initialFragment) {
             "MyPetsFragment" -> MyPetsFragment()
-            // Other fragments could be added here
-            else -> MyPetsFragment() // Default to MyPetsFragment
+            else -> MyPetsFragment()
         }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
@@ -72,7 +69,6 @@ class MainActivity : AppCompatActivity() {
             val json = String(bytes, Charsets.UTF_8)
             account = gson.fromJson(json, Profile::class.java)
         }.addOnFailureListener { exception ->
-            // Handle error
             Toast.makeText(this, exception.message, Toast.LENGTH_SHORT).show()
         }
     }
